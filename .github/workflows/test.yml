@@ -1,0 +1,41 @@
+name: Web App Challenge
+
+on:
+    pull_request:
+        branches: 
+            - main
+
+jobs:
+   build_and_test:
+      name: Build and Test
+      runs-on: ubuntu-latest
+      steps:
+            - name: Checkout repository code
+              uses: actions/checkout@v4
+
+            - name: Build and start services with Docker Compose
+              run: docker compose up --build -d 
+
+            - name: Show Docker logs
+              run: docker compose logs web
+
+            - name: Wait for services to start and to be healthy
+              uses: jaracogmbh/docker-compose-health-check-action@v1.0.0
+              with:
+                max-retries: 10 
+                retry-interval: 10
+                compose-file: "docker-compose.yml" 
+                skip-exited: "true"
+                skip-no-healthcheck: "true"
+
+            - name: Verify /health endpoint returns HTTP 200 #
+              run: curl --fail http://localhost:8000/health 
+
+            - name: Run Pytest tests inside web container
+              run: docker compose exec -T web pytest
+
+            - name: Clean up Docker Compose services #
+              if: always() 
+              run: docker compose down
+
+               

@@ -10,7 +10,6 @@ def client():
 
 
 def test_health(client):
-    """Тества /health endpoint-а."""
     response = client.get("/health")
     assert response.status_code == 200
     json_data = response.get_json()
@@ -20,8 +19,7 @@ def test_health(client):
 
 
 def test_visit(client):
-    """Тества /visit endpoint-а."""
     response = client.get("/visit")
 
     assert response.status_code == 200
-    assert b"visits" in response.data  # response.data е в байтове
+    assert b"visits" in response.data

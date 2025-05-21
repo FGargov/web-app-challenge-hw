@@ -29,7 +29,7 @@ This is a simple web application built with Flask (Python) that counts and displ
 *   **Flask 3.1.1:** A micro web framework
 *   **Redis 4.5.0:** An in-memory data store (for the visit counter)
 *   **Docker & Docker Compose:** For containerization and service management
-*   **GitHub Actions:** For CI pipeline
+*   **GitHub Actions:** For CI/CD pipeline
 *   **Pytest 7.4.0:** For automated tests
 
 <br> 

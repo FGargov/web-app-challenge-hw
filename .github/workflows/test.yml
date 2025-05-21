@@ -4,6 +4,9 @@ on:
     pull_request:
         branches: 
             - main
+    push:
+        branches:
+            - main
 
 jobs:
    build_and_test:
@@ -38,4 +41,36 @@ jobs:
               if: always() 
               run: docker compose down
 
-               
+   build_and_push_to_dockerhub:
+     name: Build and Push to Docker Hub (CD)
+     runs-on: ubuntu-latest
+     needs: build_and_test
+     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+     steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta_web
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/hwdevopsscratch-web
+
+      - name: Build and push Docker image for web service
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta_web.outputs.tags }}
+          labels: ${{ steps.meta_web.outputs.labels }}

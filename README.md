@@ -109,6 +109,19 @@ If any of these steps fail, the entire pipeline is considered unsuccessful!
 
 <br>
 
+## Continuous Delivery (CD) to Docker Hub
+
+When a Pull Request is merged into the `main` branch (or a push is made directly to `main`), the CI pipeline runs all tests and builds the application as described above.
+
+If all CI steps pass successfully, an additional **Continuous Delivery (CD) step** is executed:
+- **Builds a Docker image** for the web application.
+- **Tags the image** automatically (with `latest`).
+- **Pushes the image** to your Docker Hub repository:  
+  `windowmaker/web-app-challenge-hw`
+
+This ensures that the latest tested version of the application is always available as a Docker image for deployment or further testing.
+
+
 ## Running Tests Locally
 
 You can run the `pytest` tests locally after starting the services with `docker compose up -d`:
